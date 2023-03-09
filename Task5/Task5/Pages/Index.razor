@@ -1,0 +1,70 @@
+﻿@page "/"
+@using Bogus;
+@using Task5.Data;
+
+
+
+<div class="mb-2">
+    <Row>
+        <Col Span="3">
+        <label for="count" class="form-label">Count</label>
+        </Col>
+        <Col Span="6">
+        <AntDesign.InputNumber name="count" Id="count" Min="0" Max="1000" Style="margin:0 16px;" @bind-Value="@_count" TValue="int" />
+        </Col>
+        <Col Span="3">
+        <label for="country" class="form-label">Country</label>
+        </Col>
+        <Col Span="6">
+        <select required id="country" name="country" class="form-select" @onchange="e=>SetLocale(e.Value.ToString())">
+            <option selected value="en_US">USA</option>
+            <option value="ge">Georgia </option>
+            <option value="pl">Poland</option>
+        </select>
+        </Col>
+    </Row>
+    <Row>
+        <Col Span="3">
+            <label for="errors" class="form-label">Errors</label>
+        </Col>
+        <Col Span="16">
+        <Slider TValue="double" Min="0" Max="1000" @bind-Value="@_errors" />
+        </Col>
+        <Col Span="4">
+        <AntDesign.InputNumber Id="errors" name="errors" Min="0" Max="1000" Style="margin:0 16px;" @bind-Value="@_errors" TValue="double" />
+        </Col>
+    </Row>
+</div>
+<Button Class="btn btn-primary mb-2" OnClick="Seed">Seed</Button>
+
+<Table TItem="Citizen" PageSize="15" Size="TableSize.Small" DataSource="_citizens">
+    <PropertyColumn Title="No:" Property="c=> _citizens.IndexOf(c)+1"/>
+    <PropertyColumn Property="c=>c.Id" />
+    <PropertyColumn Property="c=>c.Name" />
+    <PropertyColumn Property="c=>c.Phone" />
+  <PropertyColumn Property="c=>c.Address" />
+</Table>
+
+@code{
+    List<Citizen> _noisyData = new();
+    List<Citizen> _citizens = new();
+
+    string _locale = "en";
+    double _errors = 0;
+    int _count = 0;
+
+    void SetLocale(string locale)
+    {
+        _locale = locale;
+    }
+
+    void SetError(string errors)
+    {
+        _errors = Convert.ToDouble(errors);
+    }
+
+    void Seed()
+    {
+        _citizens = FakerService.FakeData(_locale,_count, (int)_errors);
+    }
+}
